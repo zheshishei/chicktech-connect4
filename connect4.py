@@ -28,15 +28,7 @@ class Connect4():
 
     @classmethod
     def new_game(cls, player1, player2):
-        board = [
-            [None, None, None, None, None, None],
-            [None, None, None, None, None, None],
-            [None, None, None, None, None, None],
-            [None, None, None, None, None, None],
-            [None, None, None, None, None, None],
-            [None, None, None, None, None, None],
-            [None, None, None, None, None, None],
-        ]
+        board = [[None] * 6 for i in range(7)]
 
         return cls(
             board=board,
@@ -63,7 +55,7 @@ class Connect4():
     @property
     def row_winner(self):
         board = Connect4.copy_board(self)
-        rotated_board = [list(row) for row in zip(*board)]
+        rotated_board = map(list, zip(*board))
 
         return bool([
             row for row in rotated_board
@@ -73,10 +65,10 @@ class Connect4():
     @property
     def left_diag_winner(self):
         shifted_board = [
-            [None for i in range(5 - index)] + column + [None for i in range(index)]
+            ([None] * (5 - index)) + column + ([None] * index)
             for index, column in enumerate(self.board)
         ]
-        rotated_board = [list(row) for row in zip(*shifted_board)]
+        rotated_board = map(list, zip(*shifted_board))
 
         return bool([
             diag for diag in rotated_board
@@ -86,10 +78,10 @@ class Connect4():
     @property
     def right_diag_winner(self):
         shifted_board = [
-            [None for i in range(index)] + column + [None for i in range(5 - index)]
+            ([None] * index) + column + ([None] * (5 - index))
             for index, column in enumerate(self.board)
         ]
-        rotated_board = [list(row) for row in zip(*shifted_board)]
+        rotated_board = map(list, zip(*shifted_board))
 
         return bool([
             diag for diag in rotated_board
@@ -129,10 +121,11 @@ class Connect4():
         )
 
     def __str__(self):
-        board = [list(row) for row in zip(*Connect4.copy_board(self))] # unpack and convert from tuples to lists
-        board.reverse() # reverse the rows so we start from the top first
-        board += [['-' for i in range(len(self.board))]] # add a bottom barrier for the pieces for each column
-        board += [[str(i + 1) for i in range(len(self.board))]] # numbering for the columns
+        num_cols = len(self.board)
+        board = [list(row) for row in zip(*Connect4.copy_board(self))] # rotate and convert from tuples to lists
+        board.reverse()
+        board += [['-' for i in range(num_cols)]] # add a bottom barrier for the pieces for each column
+        board += [[str(i + 1) for i in range(num_cols)]] # numbering for the columns
 
         board_state = '\n'.join([
             '| {0} |'.format(' | '.join([piece or ' ' for piece in row]))
