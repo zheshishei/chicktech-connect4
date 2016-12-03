@@ -38,7 +38,7 @@ class TicTacToe():
     def column_winner(self):
         return bool([
             column for column in self.board
-            if is_all_of_piece(*column, self.turn_order[0].piece_type)
+            if is_all_of_piece(*column, turn=self.turn_order[0].piece_type)
         ])
 
     @property
@@ -47,7 +47,7 @@ class TicTacToe():
 
         return bool([
             row for row in rotated_board
-            if is_all_of_piece(*row, self.turn_order[0].piece_type)
+            if is_all_of_piece(*row, turn=self.turn_order[0].piece_type)
         ])
 
     @property
@@ -55,7 +55,7 @@ class TicTacToe():
         return is_all_of_piece(
             self.board[0][0], 
             self.board[1][1], 
-            self.board[2][2], 
+            self.board[2][], 
             self.turn_order[0].piece_type
         )
 
