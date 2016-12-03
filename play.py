@@ -7,8 +7,11 @@ from flask import request
 
 import interface
 from player.bot_player import Connect4BotPlayer
+from player.bot_player import TicTacToeBotPlayer
 from player.user_player import Connect4Player
 from player.user_player import EndGameException
+from player.user_player import TicTacToePlayer
+from tictactoe import TicTacToe
 from connect4 import Connect4
 from connect4 import InvalidMoveError
 
@@ -17,10 +20,14 @@ from connect4 import InvalidMoveError
 def parse_args():
     """Program Description. User Help Manual."""
     parser = argparse.ArgumentParser(
-        prog='game',
+        prog='play.py',
         description='Let\'s Play Connect4!',
     )
 
+    parser.add_argument(
+        'gametype', 
+        help='"tictactoe" or "connect4". the type of game you want to play',
+    )
     parser.add_argument(
         '--bot',
         action='store_const',
@@ -63,23 +70,39 @@ def get_decision():
 
 ## END BOT SERVER
 
-def main(bot):
-    """Creates the game passed in by the user and manages gameplay."""
-    # create players
-    piece1 = '@'
-    piece2 = '#'
-    player1 = Connect4Player(piece1)
-    player2 = Connect4Player(piece2)
-    initial_turn_order = [player1, player2]
+def get_players_and_turn_order(game_type, bot):
+    players = {
+        'connect4': (('@', '#'), Connect4Player, Connect4BotPlayer),
+        'tictactoe': (('X', 'O'), TicTacToePlayer, TicTacToeBotPlayer),
+    }
 
+    pieces, player, bot_player = players[game_type]
+
+    player1 = player(pieces[0])
+    player2 = player(pieces[1])
+    initial_turn_order = [player1, player2]
+    
     # create a bot player if we need to
     # randomize the ordering because it's fun
     if bot:
-        player2 = Connect4BotPlayer(piece2)
+        player2 = bot_player(piece2)
         initial_turn_order = round(random()) and [player1, player2] or [player2, player1]
+    
+    return initial_turn_order
+
+
+def main(game_type, bot):
+    """Creates the game passed in by the user and manages gameplay."""
+    game_class = {
+        'connect4': Connect4,
+        'tictactoe': TicTacToe,
+    }
+
+    # create players
+    initial_turn_order = get_players_and_turn_order(game_type, bot)
 
     # create a game
-    game = Connect4.new_game(*initial_turn_order)
+    game = game_class[game_type].new_game(*initial_turn_order)
 
     # start the game
     while not game.winner:
@@ -93,13 +116,13 @@ def main(bot):
         # get the next player's move
         while True:
             try:
-                column = current_player.get_next_move(game)
+                next_move = current_player.get_next_move(game)
                 # perform the selected action
-                game = game.place_piece(column)
+                game = game.place_piece(*next_move)
             except EndGameException:
                 return
             except InvalidMoveError as err:
-                interface.display.display_error(err)
+                interface.display.display_error(err.message)
             else:
                 break
 
@@ -112,5 +135,6 @@ if __name__ == '__main__':
         connect4app.run()
     else:
         main(
+            game_type=prog_args.gametype,
             bot=prog_args.bot
         )

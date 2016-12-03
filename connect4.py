@@ -1,11 +1,6 @@
 import copy
+from game import InvalidMoveError
 
-
-class InvalidMoveError(Exception):
-    '''Exception for an invalid move'''
-    def __init__(self, message):
-        self.message = message
-        super().__init__()
 
 def has_run_of_at_least_4(list_with_run, piece_type):
     '''checks whether list_with_run has a run of at least 4 of piece_type'''
@@ -54,8 +49,7 @@ class Connect4():
 
     @property
     def row_winner(self):
-        board = Connect4.copy_board(self)
-        rotated_board = map(list, zip(*board))
+        rotated_board = map(list, zip(*self.board))
 
         return bool([
             row for row in rotated_board
