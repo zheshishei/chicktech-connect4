@@ -2,8 +2,8 @@
 import argparse
 from random import random
 
-from flask import Flask
-from flask import request
+# from flask import Flask
+# from flask import request
 
 import interface
 from player.bot_player import Connect4BotPlayer
@@ -51,22 +51,22 @@ def parse_args():
 
 ## BEGIN BOT SERVER
 
-connect4app = Flask(__name__)
+# connect4app = Flask(__name__)
 
-@connect4app.after_request
-def after_request(response):
-    response.headers.add('Access-Control-Allow-Origin', '*')
-    response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
-    response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE')
-    return response
+# @connect4app.after_request
+# def after_request(response):
+#     response.headers.add('Access-Control-Allow-Origin', '*')
+#     response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
+#     response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE')
+#     return response
 
-@connect4app.route("/")
-def get_decision():
-    board = request.args.board
-    piece_type = request.args.piece_type
-    player = Connect4BotPlayer(piece_type)
+# @connect4app.route("/")
+# def get_decision():
+#     board = request.args.board
+#     piece_type = request.args.piece_type
+#     player = Connect4BotPlayer(piece_type)
 
-    return player.get_next_move(board)
+#     return player.get_next_move(board)
 
 ## END BOT SERVER
 
