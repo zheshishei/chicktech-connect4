@@ -39,4 +39,4 @@ class TicTacToeBotPlayer(Player):
         return decided_move
 
     def _decide_move(self, game):
-        return 'a1'
+        return 'A', 1

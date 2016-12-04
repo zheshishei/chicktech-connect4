@@ -85,7 +85,7 @@ def get_players_and_turn_order(game_type, bot):
     # create a bot player if we need to
     # randomize the ordering because it's fun
     if bot:
-        player2 = bot_player(piece2)
+        player2 = bot_player(pieces[1])
         initial_turn_order = round(random()) and [player1, player2] or [player2, player1]
     
     return initial_turn_order
